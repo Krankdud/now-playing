@@ -8,3 +8,5 @@ edition = "2018"
 
 [dependencies]
 sdl2 = "0.34.3"
+serde = "1.0.116"
+toml = "0.5.6"
