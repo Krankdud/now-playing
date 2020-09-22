@@ -5,6 +5,9 @@ use sdl2::pixels::Color;
 use std::path::Path;
 use std::time::Duration;
 
+mod song;
+use song::SongReader;
+
 fn main() {
     let ctx = sdl2::init().unwrap();
     let video_ctx = ctx.video().unwrap();
@@ -32,6 +35,14 @@ fn main() {
         .solid(Color::RGB(255, 255, 255))
         .expect("Could not render text");
     let texture = text.as_texture(&texture_creator).unwrap();
+
+    let song_reader = SongReader::from("now_playing.txt");
+    let song = song_reader.update().unwrap();
+    println!("{}", song.title);
+    println!("{}", song.artist);
+    println!("{}", song.album);
+    println!("{}", song.position);
+    println!("{}", song.duration);
 
     let mut event_pump = ctx.event_pump().unwrap();
     'running: loop {
