@@ -30,7 +30,7 @@ fn main() {
 
     let text_renderer = TextRenderer::new(&ttf_ctx, &texture_creator);
 
-    let song_reader = SongReader::from("now_playing.txt");
+    let mut song_reader = SongReader::from("now_playing.txt");
 
     let mut event_pump = ctx.event_pump().unwrap();
     'running: loop {
@@ -41,7 +41,10 @@ fn main() {
             }
         }
 
-        let song = song_reader.update().unwrap();
+        let song = match song_reader.update() {
+            Err(_) => song_reader.get_song(),
+            Ok(song) => song,
+        };
 
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
