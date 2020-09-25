@@ -2,23 +2,21 @@ extern crate sdl2;
 
 use sdl2::event::Event;
 use sdl2::pixels::Color;
-use std::path::Path;
 use std::time::Duration;
 
 mod song;
 use song::SongReader;
+
+mod text;
+use text::TextRenderer;
 
 fn main() {
     let ctx = sdl2::init().unwrap();
     let video_ctx = ctx.video().unwrap();
     let ttf_ctx = sdl2::ttf::init().expect("Failed to initialize ttf");
 
-    let font = ttf_ctx
-        .load_font(Path::new("Silver.ttf"), 32)
-        .expect("Failed to load font");
-
     let window = video_ctx
-        .window("rust-sdl2 demo", 800, 600)
+        .window("Now Playing", 320, 200)
         .position_centered()
         .build()
         .expect("Failed to create window");
@@ -30,19 +28,9 @@ fn main() {
 
     let texture_creator = canvas.texture_creator();
 
-    let text = font
-        .render("Hello world")
-        .solid(Color::RGB(255, 255, 255))
-        .expect("Could not render text");
-    let texture = text.as_texture(&texture_creator).unwrap();
+    let text_renderer = TextRenderer::new(&ttf_ctx, &texture_creator);
 
     let song_reader = SongReader::from("now_playing.txt");
-    let song = song_reader.update().unwrap();
-    println!("{}", song.title);
-    println!("{}", song.artist);
-    println!("{}", song.album);
-    println!("{}", song.position);
-    println!("{}", song.duration);
 
     let mut event_pump = ctx.event_pump().unwrap();
     'running: loop {
@@ -53,10 +41,16 @@ fn main() {
             }
         }
 
+        let song = song_reader.update().unwrap();
+
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
+
         canvas.set_draw_color(Color::RGB(255, 255, 255));
-        canvas.copy(&texture, None, text.rect()).unwrap();
+
+        text_renderer.render(&mut canvas, "Now Playing:", 8, 4, Color::RGB(255, 128, 0));
+        text_renderer.render_song(&mut canvas, &song, 8, 32);
+
         canvas.present();
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
     }
