@@ -2,3 +2,7 @@
 Cargo.lock
 
 now_playing.txt
+
+/gnu-mingw
+/msvc
+/*.dll
