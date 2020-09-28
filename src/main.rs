@@ -16,7 +16,7 @@ fn main() {
     let ttf_ctx = sdl2::ttf::init().expect("Failed to initialize ttf");
 
     let window = video_ctx
-        .window("Now Playing", 320, 200)
+        .window("Now Playing", 320, 140)
         .position_centered()
         .build()
         .expect("Failed to create window");
