@@ -7,7 +7,7 @@ use std::path::Path;
 
 use crate::song::Song;
 
-const TEXT_WIDTH: i32 = 312;
+const TEXT_WIDTH: i32 = 308;
 
 pub struct TextRenderer<'a, T> {
     font: Font<'a, 'a>,
