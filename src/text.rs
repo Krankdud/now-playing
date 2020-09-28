@@ -37,52 +37,16 @@ impl<'a, T> TextRenderer<'a, T> {
     }
 
     pub fn render_song(&self, canvas: &mut WindowCanvas, song: &Song, x: i32, y: i32) {
-        let text = self
-            .font
-            .render(&song.title)
-            .solid(Color::RGB(255, 255, 255))
-            .expect("Could not render text");
-        let texture = text.as_texture(self.texture_creator).unwrap();
-        let mut rect = text.rect();
-        rect.set_x(x);
-        rect.set_y(y);
-        canvas.copy(&texture, None, rect).unwrap();
+        self.render(canvas, &song.title, x, y, Color::RGB(255, 255, 255));
 
         let y = y + self.font.height() - 16;
-        let text = self
-            .font
-            .render(&song.artist)
-            .solid(Color::RGB(255, 255, 255))
-            .expect("Could not render text");
-        let texture = text.as_texture(self.texture_creator).unwrap();
-        let mut rect = text.rect();
-        rect.set_x(x);
-        rect.set_y(y);
-        canvas.copy(&texture, None, rect).unwrap();
+        self.render(canvas, &song.artist, x, y, Color::RGB(255, 255, 255));
 
         let y = y + self.font.height() - 16;
-        let text = self
-            .font
-            .render(&song.album)
-            .solid(Color::RGB(255, 255, 255))
-            .expect("Could not render text");
-        let texture = text.as_texture(self.texture_creator).unwrap();
-        let mut rect = text.rect();
-        rect.set_x(x);
-        rect.set_y(y);
-        canvas.copy(&texture, None, rect).unwrap();
+        self.render(canvas, &song.album, x, y, Color::RGB(255, 255, 255));
 
         let y = y + self.font.height() - 16;
         let playback_text = format!("{} / {}", song.position, song.duration);
-        let text = self
-            .font
-            .render(&playback_text)
-            .solid(Color::RGB(255, 255, 255))
-            .expect("Could not render text");
-        let texture = text.as_texture(self.texture_creator).unwrap();
-        let mut rect = text.rect();
-        rect.set_x(x);
-        rect.set_y(y);
-        canvas.copy(&texture, None, rect).unwrap();
+        self.render(canvas, &playback_text, x, y, Color::RGB(255, 255, 255));
     }
 }
