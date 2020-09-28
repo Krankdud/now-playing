@@ -26,6 +26,10 @@ impl<'a, T> TextRenderer<'a, T> {
     }
 
     fn draw_text(&self, canvas: &mut WindowCanvas, string: &str, x: i32, y: i32, color: Color) {
+        if string.len() == 0 {
+            return;
+        }
+
         let text = self
             .font
             .render(string)
