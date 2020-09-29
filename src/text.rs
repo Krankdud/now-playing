@@ -7,21 +7,28 @@ use std::path::Path;
 
 use crate::song::Song;
 
-const TEXT_WIDTH: i32 = 308;
-
 pub struct TextRenderer<'a, T> {
     font: Font<'a, 'a>,
     texture_creator: &'a TextureCreator<T>,
+
+    text_width: i32,
 }
 
 impl<'a, T> TextRenderer<'a, T> {
-    pub fn new(ttf_ctx: &'a Sdl2TtfContext, texture_creator: &'a TextureCreator<T>) -> Self {
+    pub fn new(
+        ttf_ctx: &'a Sdl2TtfContext,
+        texture_creator: &'a TextureCreator<T>,
+        font: &str,
+        font_size: u16,
+        window_width: u32,
+    ) -> Self {
         let font = ttf_ctx
-            .load_font(Path::new("Silver.ttf"), 36)
+            .load_font(Path::new(font), font_size)
             .expect("Could not load font");
         TextRenderer {
             font: font,
             texture_creator: texture_creator,
+            text_width: (window_width - 12) as i32,
         }
     }
 
@@ -44,7 +51,7 @@ impl<'a, T> TextRenderer<'a, T> {
 
     pub fn render(&self, canvas: &mut WindowCanvas, string: &str, x: i32, y: i32, color: Color) {
         let (width, _height) = self.font.size_of(string).unwrap();
-        if x + (width as i32) > TEXT_WIDTH {
+        if x + (width as i32) > self.text_width {
             let splits: Vec<&str> = string.split(' ').collect();
             let mut truncated = String::new();
             let mut len: u32 = 0;
@@ -53,11 +60,11 @@ impl<'a, T> TextRenderer<'a, T> {
             // Add words until we run out of space.
             for word in splits.iter() {
                 let (sw, _sh) = self.font.size_of(word).unwrap();
-                if x + ((len + sw) as i32) > TEXT_WIDTH {
+                if x + ((len + sw) as i32) > self.text_width {
                     // Add characters until we run out of space.
                     for (i, c) in word.chars().enumerate() {
                         let (cw, _ch) = self.font.size_of_char(c).unwrap();
-                        if x + ((len + cw) as i32) > TEXT_WIDTH {
+                        if x + ((len + cw) as i32) > self.text_width {
                             // Remove two characters so the whitespace will also be removed
                             if i == 1 {
                                 truncated.pop();
@@ -82,17 +89,24 @@ impl<'a, T> TextRenderer<'a, T> {
         }
     }
 
-    pub fn render_song(&self, canvas: &mut WindowCanvas, song: &Song, x: i32, y: i32) {
-        self.render(canvas, &song.title, x, y, Color::RGB(255, 255, 255));
+    pub fn render_song(
+        &self,
+        canvas: &mut WindowCanvas,
+        song: &Song,
+        x: i32,
+        y: i32,
+        color: Color,
+    ) {
+        self.render(canvas, &song.title, x, y, color);
 
         let y = y + self.font.height() - 16;
-        self.render(canvas, &song.artist, x, y, Color::RGB(255, 255, 255));
+        self.render(canvas, &song.artist, x, y, color);
 
         let y = y + self.font.height() - 16;
-        self.render(canvas, &song.album, x, y, Color::RGB(255, 255, 255));
+        self.render(canvas, &song.album, x, y, color);
 
         let y = y + self.font.height() - 16;
         let playback_text = format!("{} / {}", song.position, song.duration);
-        self.render(canvas, &playback_text, x, y, Color::RGB(255, 255, 255));
+        self.render(canvas, &playback_text, x, y, color);
     }
 }

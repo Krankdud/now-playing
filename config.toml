@@ -1,0 +1,8 @@
+filename = "now_playing.txt"
+window_width = 320
+window_height = 140
+
+font = "Silver.ttf"
+font_size = 36
+color_now_playing = "ff8000"
+color_song = "ffffff"
